@@ -1,39 +1,27 @@
 import minesweeper as ms
-import random
+import minesweeperAI as AI
 
 
-class RandomAI(ms.GameAI):
-    def __init__(self):
-        self.width = 0
-        self.height = 0
-        self.exposed_squares = set()
+config = ms.GameConfig()
 
-    def init(self, config):
-        self.width = config.width
-        self.height = config.height
-        self.exposed_squares.clear()
-
-    def next(self):
-        while True:
-            x = random.randint(0, self.width - 1)
-            y = random.randint(0, self.height - 1)
-            if (x, y) not in self.exposed_squares:
-                break
-        print('selecting point ({0},{1})'.format(x, y))
-        return x, y
-
-    def update(self, result):
-        for position in result.new_squares:
-            self.exposed_squares.add((position.x, position.y))
-
+ai = AI.AI()
+viz = ms.GameVisualizer(0)
 
 num_games = 1
-config = ms.GameConfig()
-ai = RandomAI()
-viz = ms.GameVisualizer('key')
-results = ms.run_games(config, 1, ai, viz)
-if results[0].success:
-    print('Success!')
+if True:
+    num_games = 1
+    results = ms.run_games(config, num_games, ai, viz)
 else:
-    print('Boom!')
-print('Game lasted {0} moves'.format(results[0].num_moves))
+    num_games = 1000
+    results = ms.run_games(config, num_games, ai)
+
+winRatio = 0.0
+for r in results:
+    if r.success:
+        winRatio += 1
+winRatio /= num_games
+
+print winRatio
+
+raw_input()
+viz.finish()

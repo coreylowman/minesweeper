@@ -200,7 +200,8 @@ def run_games(config, num_games, ai, viz=None):
     for x in xrange(num_games):
         game = Game(config)
         ai.init(config)
-        if viz: viz.start(game)
+        if viz:
+            viz.start(game)
         while not game.is_game_over():
             coords = ai.next()
             result = game.select(*coords)
@@ -209,7 +210,9 @@ def run_games(config, num_games, ai, viz=None):
             if not result.explosion:
                 ai.update(result)
                 game.set_flags(ai.get_flags())
-            if viz: viz.update(game)
-        if viz: viz.finish()
+            if viz:
+                viz.update(game)
+        # if viz:
+        #     viz.finish()
         results.append(GameResult(not game.explosion, game.num_moves))
     return results
