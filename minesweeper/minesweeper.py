@@ -1,6 +1,6 @@
 import random
 from abc import ABCMeta, abstractmethod
-
+import timeit
 
 class GameConfig(object):
     def __init__(self, width=8, height=8, num_mines=10):
@@ -150,9 +150,10 @@ class MoveResult(object):
 
 
 class GameResult(object):
-    def __init__(self, success, num_moves):
+    def __init__(self, success, num_moves, duration):
         self.success = success
         self.num_moves = num_moves
+        self.duration = duration
 
 
 class GameAI(object):
@@ -197,11 +198,14 @@ Returns a list of GameResult objects
 """
 def run_games(config, num_games, ai, viz=None):
     results = []
+    total_seconds = 0.0
+    start = 0.0
     for x in xrange(num_games):
         game = Game(config)
         ai.init(config)
         if viz:
             viz.start(game)
+        start = timeit.default_timer()
         while not game.is_game_over():
             coords = ai.next()
             result = game.select(*coords)
@@ -214,5 +218,5 @@ def run_games(config, num_games, ai, viz=None):
                 viz.update(game)
         # if viz:
         #     viz.finish()
-        results.append(GameResult(not game.explosion, game.num_moves))
+        results.append(GameResult(not game.explosion, game.num_moves, timeit.default_timer() - start))
     return results
